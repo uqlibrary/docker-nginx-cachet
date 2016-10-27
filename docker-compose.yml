@@ -1,0 +1,36 @@
+version: "2"
+
+  cachet:
+    image: cachethq/docker:2.3.10
+    links:
+      - postgres:postgres
+    volumes:
+      - /var/www
+    environment:
+      - DB_DRIVER=mysql
+      - DB_HOST=databaseserver
+      - DB_DATABASE=dbname
+      - DB_USERNAME=dbuser
+      - DB_PASSWORD=dbpw
+      - CACHE_DRIVER=apc
+      - SESSION_DRIVER=apc
+      - QUEUE_DRIVER=apc
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_KEY=YOUMUSTCHANGETHIS
+      - DOCKER=true
+      - MAIL_DRIVER=smtp
+      - MAIL_HOST=smtp.your.host
+      - MAIL_PORT=25
+      - MAIL_ADDRESS=whodoesfrom
+      - MAIL_NAME="Cachet Dashboard" 
+  nginx:
+    image: uqlibrary/docker-nginx-cachet
+    ports:
+      - 80:80
+    links:
+      - cachet:fpm
+    volumes_from:
+      - cachet
+    depends_on:
+      - cachet
